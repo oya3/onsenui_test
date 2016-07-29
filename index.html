@@ -1,90 +1,129 @@
-<!DOCTYPE html>
-<html class="">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="robots" content="noindex">
-    <link rel="stylesheet prefetch" href="stylesheets/onsenui.css">
-    <link rel="stylesheet prefetch" href="stylesheets/onsen-css-components.css">
-  </head>
-  <body>
-  <script src="javascripts/all.js"></script>
+<!doctype html>
+<html lang="en" ng-app="myApp">
+<head>
+  <meta charset="utf-8">
+  <title>Carousel</title>  
+  <link rel="stylesheet" href="styles/app.css"/>
+  <link rel="stylesheet prefetch" href="stylesheets/onsenui.css">
+  <link rel="stylesheet prefetch" href="stylesheets/onsen-css-components.css">
+    <script src="javascripts/all.js"></script>
+  
   <script>
-      ons.bootstrap();
-      //@ sourceURL=pen.js
+    var randomColor = function() {
+      return '#' + (function co(lor){   return (lor +=
+          [0,1,2,3,4,5,6,7,8,9,'a','b','c','d','e','f'][Math.floor(Math.random()*16)])
+            && (lor.length == 6) ?  lor : co(lor); })('');
+    };
+
+    angular.module('myApp', ['onsen'])
+
+    .controller('DynamicCarouselController', function($scope, $q) {
+      $scope.$watch('carousel', function(carousel) {
+        carousel.on('overscroll', function(event) {
+          var deferred = $q.defer();
+
+          event.waitToReturn(deferred.promise);
+
+          setTimeout(function() {
+            if (event.direction === 'left') {
+              $scope.items.unshift(randomColor());
+            }
+            else {
+              $scope.items.push(randomColor());
+            }
+
+            deferred.resolve();
+
+          }, 1000);
+        });
+      });
+
+      $scope.items = [randomColor(), randomColor(), randomColor()];
+
+      $scope.add = function() {
+        $scope.items.push(randomColor());
+      };
+
+      $scope.remove = function() {
+        $scope.items.pop();
+      };
+    });
   </script>
-  <ons-page>
-    <ons-toolbar>
-      <div class="center">Checkboxes</div>
-    </ons-toolbar>
-    <ons-list>
-      <ons-list-header>Favorite Sports</ons-list-header>
+
+  <style>
+    ons-carousel-item {
+      display: table;
+      text-align: center;
+    }
+    .item-label {
+      display: table-cell;
+      vertical-align: middle;
+      color: white;
+      line-height: 1;
+      font-size: 48px;
+      font-weight: bold;
+    }
+    .cover-label {
+      text-align: center;
+      position: absolute;
+      left: 0px;
+      width: 100%;
+      bottom: 10px;
+      color: white;
+    }
+
+    .list-item {
+      padding: 0;
+      height: 72px;
+    }
+
+    .list-action-menu {
       
-      <ons-list-item modifier="tappable">
-        <label class="checkbox checkbox--list-item">
-          <input type="checkbox">
-          <div class="checkbox__checkmark checkbox--list-item__checkmark"></div>
-          Baseball
-        </label>
-      </ons-list-item>
-      
-      <ons-list-item modifier="tappable">
-        <label class="checkbox checkbox--list-item">
-          <input type="checkbox">
-          <div class="checkbox__checkmark checkbox--list-item__checkmark"></div>
-          Soccer
-        </label>
-      </ons-list-item>
-      
-      <ons-list-item modifier="tappable">
-        <label class="checkbox checkbox--list-item">
-          <input type="checkbox" checked="checked">
-          <div class="checkbox__checkmark checkbox--list-item__checkmark"></div>
-          Basketball
-        </label>
-      </ons-list-item>
-      
-      <ons-list-item modifier="tappable">
-        <label class="checkbox checkbox--list-item">
-          <input type="checkbox" checked="checked">
-          <div class="checkbox__checkmark checkbox--list-item__checkmark"></div>
-          Golf
-        </label>
-      </ons-list-item>
-      
-      <ons-list-header>Favorite Food</ons-list-header>
-      
-      <ons-list-item modifier="tappable">
-        <label class="checkbox checkbox--noborder checkbox--list-item">
-          <input type="checkbox" checked="checked">
-          <div class="checkbox__checkmark checkbox--noborder__checkmark checkbox--list-item__checkmark"></div>
-          Hamburger
-        </label>
-      </ons-list-item>
-      
-      <ons-list-item modifier="tappable">
-        <label class="checkbox checkbox--noborder checkbox--list-item">
-          <input type="checkbox">
-          <div class="checkbox__checkmark checkbox--noborder__checkmark checkbox--list-item__checkmark"></div>
-          Beefsteak
-        </label>
-      </ons-list-item>
-      
-      <ons-list-item modifier="tappable">
-        <label class="checkbox checkbox--noborder checkbox--list-item">
-          <input type="checkbox" checked="checked">
-          <div class="checkbox__checkmark checkbox--noborder__checkmark checkbox--list-item__checkmark"></div>
-          Spaghetti
-        </label>
-      </ons-list-item>
-      
-      <ons-list-item modifier="tappable">
-        <label class="checkbox checkbox--noborder checkbox--list-item">
-          <input type="checkbox">
-          <div class="checkbox__checkmark checkbox--noborder__checkmark checkbox--list-item__checkmark"></div>
-          Natto
-        </label>
-      </ons-list-item>
-    </ons-list>
-  </ons-page>
-  </body>
+      background-color: #aaa;
+      color: white;
+      padding: 0 12px;
+      box-sizing: border-box;
+      line-height: 72px;
+    }
+    .list-action-menu:active {
+      background-color: #666;
+    }
+
+    .list-action-item {
+      padding: 0 12px;
+      box-sizing: border-box;
+    }
+
+    .name {
+      margin-top: 10px;
+      line-height: 1.2;
+    }
+    .desc {
+      line-height: 1.2;
+      font-size: 14px;
+      color: #999;
+    }
+  </style>
+  
+</head>
+
+<body>    
+  <ons-navigator var="navi">
+    <ons-page>
+      <ons-toolbar>
+        <div class="center">Carousel</div>
+      </ons-toolbar>
+      <br>
+      <ons-list>
+        <ons-list-item ng-click="navi.pushPage('pages/page1.html')" modifier="chevron">page1</ons-list-item>
+        <ons-list-item ng-click="navi.pushPage('pages/page2.html')" modifier="chevron">page2</ons-list-item>
+        <ons-list-item ng-click="navi.pushPage('pages/page3.html')" modifier="chevron">page3</ons-list-item>
+        <ons-list-item ng-click="navi.pushPage('pages/page4.html')" modifier="chevron">page4</ons-list-item>
+        <ons-list-item ng-click="navi.pushPage('pages/page5.html')" modifier="chevron">page5</ons-list-item>
+        <ons-list-item ng-click="navi.pushPage('pages/page6.html')" modifier="chevron">page6</ons-list-item>
+        <ons-list-item ng-click="navi.pushPage('pages/page7.html')" modifier="chevron">page7</ons-list-item>
+      </ons-list>
+    </ons-page>
+  </ons-navigator>
+</body>
 </html>
