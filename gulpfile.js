@@ -23,7 +23,8 @@ gulp.task('webserver', function() {
 gulp.task('scripts', function() {
   return gulp.src([
     './bower_components/angular/angular.min.js',
-    './bower_components/onsenui/js/onsenui_all.min.js'
+    './bower_components/onsenui/js/onsenui_all.min.js',
+    './node_modules/smoothie/smoothie.js'
   ])
     .pipe(concat('all.js'))
     .pipe(gulp.dest('./javascripts/'));
