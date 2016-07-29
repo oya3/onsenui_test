@@ -2,7 +2,7 @@
 $ npm install -g gulp
 $ bower install
 $ npm install
-
+$ gulp
 
 
 参考サイト：
