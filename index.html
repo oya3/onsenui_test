@@ -16,6 +16,39 @@
     };
 
     var app = angular.module('myApp', ['onsen'])
+
+    .controller('DynamicCarouselController', function($scope, $q) {
+      $scope.$watch('carousel', function(carousel) {
+        carousel.on('overscroll', function(event) {
+          var deferred = $q.defer();
+
+          event.waitToReturn(deferred.promise);
+
+          setTimeout(function() {
+            if (event.direction === 'left') {
+              $scope.items.unshift(randomColor());
+            }
+            else {
+              $scope.items.push(randomColor());
+            }
+
+            deferred.resolve();
+
+          }, 1000);
+        });
+      });
+
+      $scope.items = [randomColor(), randomColor(), randomColor()];
+
+      $scope.add = function() {
+        $scope.items.push(randomColor());
+      };
+
+      $scope.remove = function() {
+        $scope.items.pop();
+      };
+    });
+
     app.controller('MyCtrl', function($scope, $q) {
       ons.createAlertDialog('alert.html').then(function(alertDialog) {
         $scope.alertDialog = alertDialog;
