@@ -112,8 +112,45 @@
       };
 
     });
+
+    document.addEventListener("deviceready", onDeviceReady, false);
+ 
+    function onDeviceReady() {
+        // Now safe to use the Cordova API
+    }
+
+app.controller('FlickrController', function($scope,$http) {
+  $scope.fetchPhotos = function(){
+    $scope.failed = false;
+    $scope.isFetching = true;
+    $http.jsonp(
+      "http://api.flickr.com/services/feeds/photos_public.gne?format=json"
+      //{ params: { callback: 'JSON_CALLBACK' }}
+    );
+    // http.jsonp で成功／失敗を取得しようとすると、必ず404(error)がかえる。q
+    // どうもangularの仕様らしいが回避方法がわからない。とりあえず、flickrから必ず取得できる前提コード
+    //  * http://tyding.blogspot.jp/2015/10/angular-jsonp-gives-http-code-404-but.html
+    //  * http://stackoverflow.com/questions/24072617/jsonp-request-gives-404-in-angular-app
+    // XMLHttpRequest を利用すると200が返るっぽい。
+    // 
+    // .success(function () {
+    //   $scope.failed = false;
+    // })
+    // .error(function () {
+    //   $scope.failed = true;
+    // });
+      
+    jsonFlickrFeed = function(result) {
+      $scope.feeds = result;
+      // $scope.failed = true;
+      $scope.isFetching = false;
+      return true;
+    }
+  };
+});
+
   </script>
-  
+
   <script type="text/javascript">
     // グラフ表示は以下のサイトを参考にした。
     // http://simalabs.com/labs/smoothiejs
@@ -246,6 +283,23 @@
         <ons-list-item ng-click="navi.pushPage('pages/page6.html')" modifier="chevron">page6</ons-list-item>
         <ons-list-item ng-click="navi.pushPage('pages/page7.html')" modifier="chevron">page7</ons-list-item>
       </ons-list>
+
+      <div ng-controller="FlickrController as feeds">
+        <ons-list>
+          <ons-list-item class="center">
+            <ons-button type="cta" should-spin="{{isFetching}}" ng-click="fetchPhotos()">Fetch Photos</ons-button>
+          </ons-list-item>
+          
+          <ons-list-item ng-animate="'zoom'" ng-show="failed">
+            Oops! looks like Flickr is down.
+          </ons-list-item>
+          
+          <ons-list-item ng-repeat="item in feeds.items">
+            <img width="20%" ng-src="{{item.media.m}}">
+          </ons-list-item>
+        </ons-list>
+      </div>
+
     </ons-page>
   </ons-navigator>
 

@@ -6,33 +6,42 @@ var uglify = require('gulp-uglify');
 var webserver = require('gulp-webserver');
 var sourcemaps = require('gulp-sourcemaps');
 var del = require('del');
- 
+
 var paths = {
   scripts: ['app/js/**/*.coffee', '!app/external/**/*.coffee']
 };
- 
-// WebƒT[ƒo‚Ì‹@”\‚Å‚·
+
+// Webã‚µãƒ¼ãƒ
 gulp.task('webserver', function() {
   gulp.src('./')
     .pipe(webserver({
       livereload: true,
     }));
 });
- 
-// ƒXƒNƒŠƒvƒg‚ÌŒ‹‡‚Æ”z’u‚ğs‚Á‚Ä‚¢‚Ü‚·
+
+// JS ã‚’åœ§ç¸®(min)
+gulp.task('uglify', function(){
+    console.log('--------- uglify task ----------');
+    gulp.src('./node_modules/smoothie/smoothie.js')
+        .pipe(uglify({preserveComments: 'some'}))
+        .pipe(gulp.dest('./node_modules/smoothie/min'));
+});
+
+// ã‚¹ã‚¯ãƒªãƒ—ãƒˆã®çµåˆã¨é…ç½®
 gulp.task('scripts', function() {
   return gulp.src([
     './bower_components/angular/angular.min.js',
     './bower_components/onsenui/js/onsenui_all.min.js',
-    './node_modules/smoothie/smoothie.js'
+    './node_modules/smoothie/min/smoothie.js'
   ])
     .pipe(concat('all.js'))
     .pipe(gulp.dest('./javascripts/'));
 });
- 
-// ƒtƒ@ƒCƒ‹‚Ì•ÏX‚ğŠÄ‹‚µ‚Ä‚¢‚Ü‚·i¡‰ñ‚Íg‚Á‚Ä‚¢‚Ü‚¹‚ñj
+
+// ãƒ•ã‚¡ã‚¤ãƒ«ã®å¤‰æ›´ã‚’ç›£è¦–
 gulp.task('watch', function() {
-  gulp.watch(paths.scripts, ['scripts']);
+  // TODO: uglifyã¯ä¸Šæ‰‹ãå‹•ä½œã—ã¦ã‚‹ã‹ä¸æ˜ã€‚ã€‚ã€‚
+  gulp.watch(paths.scripts, ['uglify','scripts']);
 });
- 
-gulp.task('default', ['webserver', 'scripts', 'watch']);
+
+gulp.task('default', ['webserver', 'uglify', 'scripts', 'watch']);
